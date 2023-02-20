@@ -17,7 +17,7 @@ Test data is an essential part of any software development cycle, and with GitOp
 Automating IBM MQ through GitOps offers a powerful solution for managing your messaging middleware. It enables faster and more efficient deployment, reduces the risk of human error, and provides a streamlined approach to software delivery that can help you stay ahead of the competition.
 
 # Solution Strategy
-    - Spin up a test MQ Cluster (on aws EKS) and deploy the MQ Operator. Then deploy a MQ
+    - Spin up a test MQ Cluster (on aws EKS) and deploy the MQ Container
     - Build an ArgoCD Pipeline for this repo to that cluster
     - Automate rollng upgrades of MQ
     - Automate the creation of queues
@@ -26,7 +26,7 @@ Automating IBM MQ through GitOps offers a powerful solution for managing your me
 
 ## PRE-REQUISITES
 - An AWS account
-- a AWS EKS environment
+- A AWS EKS environment
 - kubectl installed
 - helm (Version 3) installed
 - aws cli installed
