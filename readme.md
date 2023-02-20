@@ -24,6 +24,22 @@ Automating IBM MQ through GitOps offers a powerful solution for managing your me
     - Automate the creation of test data
 
 
+## PRE-REQUISITES
+- An AWS account
+- a AWS EKS environment
+- kubectl installed
+- helm (Version 3) installed
+- aws cli installed
+
+## Login into your AWS EKS Cluster
+ [Log into AWS EKS](https://aws.amazon.com/premiumsupport/knowledge-center/eks-cluster-connection/)
+
+## Creating a test EKS CLUSTER
+```
+helm repo add mq-helm-eks https://ibm-client-engineering.github.io/mq-helm-eks/
+```
+
+
 ## Overview
 
 ## Building Block View
