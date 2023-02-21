@@ -28,8 +28,8 @@ Automating IBM MQ through GitOps offers a powerful solution for managing your me
    - Environment
       - An AWS account
       - A AWS EKS environment
+      - An available eks cluster with ibm-mq 
    - [Tools](#tools)
-      - an available eks cluster with ibm-mq 
       - [kubectl](#get-kubectl)
       - [helm](#get-helm) 
       - [aws cli](#get-the-aws-cli) 
@@ -199,7 +199,7 @@ $ kubectl patch deployment argocd-server -p "$(cat argocd-deployment-server.patc
 ```
 PUBLIC_DNS_NAME="gitops-mq.demotime.cloud"
 ARGOCD_ADDR="argocd.${PUBLIC_DNS_NAME}"
-BCRYPT_HASH=$(htpasswd -bnBC 10 "" newpassword314X | tr -d ':\n' | sed 's/$2y/$2a/')
+BCRYPT_HASH=$(htpasswd -bnBC 10 "" <PASSWORD> | tr -d ':\n' | sed 's/$2y/$2a/')
 
 
 $ kubectl patch secret argocd-initial-admin-secret \
@@ -208,6 +208,18 @@ $ kubectl patch secret argocd-initial-admin-secret \
     "admin.passwordMtime": "'$(date +%FT%T%Z)'"
   }}'
 ```
+
+## Login to Argo CD from the command line
+```
+argocd login argocd.gitops-mq.demotime.cloud 
+Username: admin
+Password: 
+'admin:login' logged in successfully
+```
+
+## Login to Argo CD from the web UI
+- https://argocd.gitops-mq.demotime.cloud   (use the password you set above)
+
 
 ## Building Block View
 
