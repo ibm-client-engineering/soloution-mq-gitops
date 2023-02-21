@@ -28,7 +28,7 @@ Automating IBM MQ through GitOps offers a powerful solution for managing your me
    - Environment
       - An AWS account
       - A AWS EKS environment
-    - [Tools](#tools)
+   - [Tools](#tools)
       - an available eks cluster with ibm-mq 
       - [kubectl](#get-kubectl)
       - [helm](#get-helm) 
