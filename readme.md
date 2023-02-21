@@ -209,10 +209,11 @@ aws route53 change-resource-record-sets --hosted-zone-id $R53_HOSTED_ZONE_ID --c
 
 ```
 
-## Create the ArgoCD loadbalncer
+## Create the ArgoCD Load Balncer
+
+- Create this file argocd/argocd-deployment-server.patch.yaml
 
 ```
-cat > argocd-deployment-server.patch.yaml << EOF
 spec:
   template:
     spec:
@@ -223,10 +224,12 @@ spec:
           - /shared/app
           - --insecure
           name: argocd-server
-EOF
-
-$ kubectl patch deployment argocd-server -p "$(cat argocd-deployment-server.patch.yaml)" 
 ```
+- apply the deployment patch
+```bash
+kubectl patch deployment argocd-server -p "$(cat argocd-deployment-server.patch.yaml)" 
+```
+
 ## Update the ArgoCD web UI Password
 ```
 PUBLIC_DNS_NAME="gitops-mq.demotime.cloud"
@@ -283,7 +286,6 @@ data:
     p, role:ci, repositories, create, *, allow
     p, role:ci, repositories, get, *, allow
     p, role:ci, repositories, list, *, allow
-
     g, ci, role:ci
 
 ```

@@ -24,5 +24,4 @@ data:
     p, role:ci, repositories, create, *, allow
     p, role:ci, repositories, get, *, allow
     p, role:ci, repositories, list, *, allow
-
     g, ci, role:ci
