@@ -1,6 +1,6 @@
 
 describe-pod:
-	@kubectl describe pod/mq-gitops-demo-ibm-mq-0
+	@kubectl describe pod/mq-gitops-demo-ibm-mq-0 -n gitops-mq
 
 install:
 	@helm install  mq-gitops-demo mq-helm-eks/ibm-mq \
@@ -29,7 +29,7 @@ get-console:
 
 
 namespace:
-	@kubectl create namespace mq-gitops
+	@-kubectl create namespace mq-gitops
 
 set-context:
 	@kubectl config set-context --current --namespace=mq-gitops
@@ -39,4 +39,4 @@ config-map:
 
 
 
-build: namespace set-context config-map install
+build: namespace config-map install
