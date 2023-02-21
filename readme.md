@@ -26,14 +26,14 @@ Automating IBM MQ through GitOps offers a powerful solution for managing your me
 
 ## PRE-REQUISITES
    - Environment
-    - An AWS account
-    - A AWS EKS environment
-   - [Tools](#tools)
-    - an available eks cluster with ibm-mq 
-    - [kubectl](#get-kubectl)
-    - [helm](#get-helm) 
-    - [aws cli](#get-the-aws-cli) 
-    - [argocd](#get-the-argocd-cli)
+      - An AWS account
+      - A AWS EKS environment
+    - [Tools](#tools)
+      - an available eks cluster with ibm-mq 
+      - [kubectl](#get-kubectl)
+      - [helm](#get-helm) 
+      - [aws cli](#get-the-aws-cli) 
+      - [argocd](#get-the-argocd-cli)
 
 ## Login into your AWS EKS Cluster
  [Log into AWS EKS](https://aws.amazon.com/premiumsupport/knowledge-center/eks-cluster-connection/)
