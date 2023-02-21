@@ -25,19 +25,48 @@ Automating IBM MQ through GitOps offers a powerful solution for managing your me
 
 
 ## PRE-REQUISITES
-- An AWS account
-- A AWS EKS environment
-- kubectl installed
-- helm (Version 3) installed
-- aws cli installed
-- an available eks cluster with ibm-mq installed
-- argocd  [Link](https://github.com/argoproj/argo-cd/releases/download/v2.6.2/argocd-linux-amd64)
+  ## Environment
+    - An AWS account
+    - A AWS EKS environment
+  ## Tools
+    - an available eks cluster with ibm-mq 
+    - [kubectl](#get-kubectl)
+    - [helm](#get-helm) 
+    - [aws cli](#get-the-aws-cli) 
+    - [argocd](#get-the-argocd-cli)
 
 ## Login into your AWS EKS Cluster
  [Log into AWS EKS](https://aws.amazon.com/premiumsupport/knowledge-center/eks-cluster-connection/)
 
 
 ## Overview
+
+# PRE-REQUISITES
+
+
+## get the AWS CLI
+```
+$ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+
+## Get kubectl 
+```
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+```
+
+## Get the ArgoCD CLI
+
+```
+wget https://github.com/argoproj/argo-cd/releases/download/v2.6.2/argocd-linux-amd64
+chmod +x  ./argocd-linux-amd64 
+sudo mv argocd-linux-amd64  /usr/bin/argocd
+
+```
+
+
 
 ## Create a hosted Zone in Route 53
 We are using the domain gitops-mq.demotime.cloud for this demo. You can use any domain you like.
@@ -83,16 +112,6 @@ aws acm request-certificate \
     "CertificateArn": "arn:aws:acm:us-east-1:748107796891:certificate/1812a0ef-fc55-45bb-944c-48218a263772"
 }
 ```
-
-# Get the ArgoCD CLI
-
-```
-wget https://github.com/argoproj/argo-cd/releases/download/v2.6.2/argocd-linux-amd64
-chmod +x  ./argocd-linux-amd64 
-sudo mv argocd-linux-amd64  /usr/bin/argocd
-
-```
-
 
 ## Install ArgoCd into your cluster
 ```
