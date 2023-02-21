@@ -2,3 +2,4 @@ todo
 *.tgz
 *.tar
 .vscode-upload.json
+.chris.git.secret
