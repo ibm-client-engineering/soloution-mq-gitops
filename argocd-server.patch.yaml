@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-east-1:748107796891:certificate/ccc1b02c-8bad-4559-ac61-5efd4087432b"
+spec:
+  type: LoadBalancer
+  loadBalancerSourceRanges:
+  - "99.64.82.20/32"

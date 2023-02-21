@@ -1,0 +1,10 @@
+{
+            "Changes": [{
+            "Action": "CREATE",
+                        "ResourceRecordSet": {
+                                    "Name": "argocd.gitops-mq.demotime.cloud.",
+                                    "Type": "CNAME",
+                                    "TTL": 300,
+                                 "ResourceRecords": [{ "Value": "a3e7293f4e35741caba5cb91959eeefe-126448417.us-east-1.elb.amazonaws.com"}]
+}}]
+}

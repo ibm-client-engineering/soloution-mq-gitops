@@ -30,89 +30,165 @@ Automating IBM MQ through GitOps offers a powerful solution for managing your me
 - kubectl installed
 - helm (Version 3) installed
 - aws cli installed
+- an available eks cluster with ibm-mq installed
+- argocd  [Link](https://github.com/argoproj/argo-cd/releases/download/v2.6.2/argocd-linux-amd64)
 
 ## Login into your AWS EKS Cluster
  [Log into AWS EKS](https://aws.amazon.com/premiumsupport/knowledge-center/eks-cluster-connection/)
 
-## Creating a test EKS CLUSTER
-First, make sure you have the IBM MQ Helm chart installed on your system. You can install it using the following command:
-
-```bash
-helm repo add mq-helm-eks https://ibm-client-engineering.github.io/mq-helm-eks/
-```
-
-Then create the desired namespace, we will be using mq-gitops.
-```bash
-kubectl create namespace mq-gitops
-```
-
-Set the namespace to mq-gitops
-
-```bash
-kubectl config set-context --current --namespace=mq-gitops
-```
-
-Apply the configmap for ouw mq container. This contains the TLS certificates and other configuration for our MQ container.
-
-```bash
-kubectl apply -f mq/config-map.yaml -n mq-gitops
-```
-
-Now we can install the IBM MQ Helm chart using the following command:
-
-```bash
-helm install mq-gitops-demo mq-helm-eks/ibm-mq \
--f mq/values.yaml \
---set "queueManager.envVariables[0].name=MQ_ADMIN_PASSWORD" \
---set "queueManager.envVariables[0].value=mqpasswd" \
---set "queueManager.envVariables[1].name=MQ_APP_PASSWORD" \
---set "queueManager.envVariables[1].value=mqpasswd" \
---set "LICENSE=accept" 
-```
-
-## this takes a few minutes to install, so have a break.
-
-You can verify that the chart has been installed by running the following command:
-
-```bash
-helm list -n mq-gitops
-```
-
-
-
-```bash
- skopeo list-tags docker://icr.io/ibm-messaging/mq
-        "9.1.5.0-r2",
-        "9.2.0.0-r1",
-        "9.2.0.0-r2",
-        "9.2.0.0-r3",
-        "9.2.1.0-r1",
-        "9.2.1.0-r2",
-        "9.2.2.0-r1",
-        "9.2.3.0-r1",
-        "9.2.4.0-r1",
-        "9.2.5.0-r1",
-        "9.2.5.0-r2",
-        "9.2.5.0-r3",
-        "9.3.0.0-r1",
-        "9.3.0.0-r2",
-        "9.3.0.0-r3",
-        "9.3.0.1-r1",
-        "9.3.0.1-r2",
-        "9.3.0.1-r3",
-        "9.3.0.1-r4",
-        "9.3.0.3-r1",
-        "9.3.0.4-r1",
-        "9.3.1.0-r1",
-        "9.3.1.0-r2",
-        "9.3.1.0-r3",
-        "9.3.1.1-r1",
-        "9.3.2.0-r1"
-```
-
-
 
 ## Overview
+
+## Create a hosted Zone in Route 53
+We are using the domain gitops-mq.demotime.cloud for this demo. You can use any domain you like.
+```
+aws route53 create-hosted-zone --name gitops-mq.demotime.cloud --caller-reference "Route 53 Addition"
+{
+    "Location": "https://route53.amazonaws.com/2013-04-01/hostedzone/Z05962992YBU6O501Z5JI",
+    "HostedZone": {
+        "Id": "/hostedzone/Z05962992YBU6O501Z5JI",
+        "Name": "gitops-mq.demotime.cloud.",
+        "CallerReference": "Route 53 Addition",
+        "Config": {
+            "PrivateZone": false
+        },
+        "ResourceRecordSetCount": 2
+    },
+    "ChangeInfo": {
+        "Id": "/change/C05639501P5X1SLWTV7IX",
+        "Status": "PENDING",
+        "SubmittedAt": "2023-02-21T18:52:35.108000+00:00"
+    },
+    "DelegationSet": {
+        "NameServers": [
+            "ns-141.awsdns-17.com",
+            "ns-1128.awsdns-13.org",
+            "ns-569.awsdns-07.net",
+            "ns-1793.awsdns-32.co.uk"
+        ]
+    }
+}
+
+```
+
+## Request a Certificate for the hosted zone
+```
+aws acm request-certificate \
+--domain-name gitops-mq.demotime.cloud \
+--key-algorithm RSA_2048 \
+--validation-method DNS \
+--idempotency-token 1234 \
+--options CertificateTransparencyLoggingPreference=DISABLED
+{
+    "CertificateArn": "arn:aws:acm:us-east-1:748107796891:certificate/1812a0ef-fc55-45bb-944c-48218a263772"
+}
+```
+
+# Get the ArgoCD CLI
+
+```
+wget https://github.com/argoproj/argo-cd/releases/download/v2.6.2/argocd-linux-amd64
+chmod +x  ./argocd-linux-amd64 
+sudo mv argocd-linux-amd64  /usr/bin/argocd
+
+```
+
+
+## Install ArgoCd into your cluster
+```
+kubectl create namespace argocd
+kubectl config set-context --current --namespace=argocd 
+kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+## Create the argocy service patch template
+```
+cat > argocd-server.patch.yaml << EOF
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "<ACM_ARGOCD_ARN>"
+spec:
+  type: LoadBalancer
+  loadBalancerSourceRanges:
+  - "<LOCAL_IP_RANGES>"
+EOF
+
+# NOTE THE ARN IS COPIED FROM THE CREATE CERTIFICATE OUTPUT
+```
+
+## Update the template with the correct arn and IP
+```
+ACM_ARGOCD_ARN=" arn:aws:acm:us-east-1:748107796891:certificate/ccc1b02c-8bad-4559-ac61-5efd4087432b"
+sed -i "s,<ACM_ARGOCD_ARN>,${ACM_ARGOCD_ARN},g; s/<LOCAL_IP_RANGES>/$(curl -s http://checkip.amazonaws.com/)\/32/g; " argocd-server.patch.yaml
+```
+
+## Apply the patch to the argocd-server service
+```
+kubectl patch svc argocd-server -p "$(cat argocd-server.patch.yaml)"
+service/argocd-server patched
+```
+
+## Create an ArgoCD Recordset in the new Zone
+- you only need the base subdomain name, it will be pre-appended with "argocd." 
+```
+PUBLIC_DNS_NAME="gitops-mq.demotime.cloud"
+R53_HOSTED_ZONE_ID="/hostedzone/Z05962992YBU6O501Z5JI"
+cat > argocd-recordset.json << EOF
+{
+            "Changes": [{
+            "Action": "CREATE",
+                        "ResourceRecordSet": {
+                                    "Name": "argocd.${PUBLIC_DNS_NAME}.",
+                                    "Type": "CNAME",
+                                    "TTL": 300,
+                                 "ResourceRecords": [{ "Value": "$(kubectl get services argocd-server --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"}]
+}}]
+}
+EOF
+aws route53 change-resource-record-sets --hosted-zone-id $R53_HOSTED_ZONE_ID --change-batch file://argocd-recordset.json
+{
+    "ChangeInfo": {
+        "Id": "/change/C06486351JH0L1O3UOPJ8",
+        "Status": "PENDING",
+        "SubmittedAt": "2023-02-21T19:53:29.642000+00:00"
+    }
+}
+
+```
+
+## Create the loadbalncer
+
+```
+cat > argocd-deployment-server.patch.yaml << EOF
+spec:
+  template:
+    spec:
+      containers:
+        - command:
+          - argocd-server
+          - --staticassets
+          - /shared/app
+          - --insecure
+          name: argocd-server
+EOF
+
+$ kubectl patch deployment argocd-server -p "$(cat argocd-deployment-server.patch.yaml)" 
+```
+## Update the ArgoCD web UI Password
+```
+PUBLIC_DNS_NAME="gitops-mq.demotime.cloud"
+ARGOCD_ADDR="argocd.${PUBLIC_DNS_NAME}"
+BCRYPT_HASH=$(htpasswd -bnBC 10 "" newpassword314X | tr -d ':\n' | sed 's/$2y/$2a/')
+
+
+$ kubectl patch secret argocd-initial-admin-secret \
+  -p '{"stringData": {
+    "admin.password": "'$BCRYPT_HASH'",
+    "admin.passwordMtime": "'$(date +%FT%T%Z)'"
+  }}'
+```
 
 ## Building Block View
 
