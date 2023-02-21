@@ -1,0 +1,16 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+mountOptions:
+  - tls
+parameters:
+  provisioningMode: efs-ap
+  fileSystemId: fs-02371262af220c220
+  directoryPerms: "775"
+  gidRangeStart: "1000" # optional
+  gidRangeEnd: "3000" # optional
+  basePath: "/efs/dynamic_provisioning" # optional
+  uid: "2001" # This tells the provisioner to make the owner this uid
+  gid: "65534" # This tells the provisioner to make the group owner this gid
