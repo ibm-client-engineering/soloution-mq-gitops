@@ -315,12 +315,18 @@ kubectl create secret generic git-demo \
 ## Rolling update via script
 Because this is a HA deployment, we will need to update the statefulset, and then the pods one at a time
 - get the sateful set
+
+you can edit this directly, but I prefer to save it to a file and edit it
+```bash
+kubectl edit statefulset.apps/gitops-mq-demo-ibm-mq -n gitops-mq
+```
+- OR
 ```
 kubectl get statefulset gitops-mq-demo-ibm-mq -n gitops-mq --output yaml >mq/statefulset.yaml
 ```
 - edit the sateful set and apply
 ```
-kubectl edit statefulset.apps/gitops-mq-demo-ibm-mq
+vi mq/statefulset.yaml
 ```
 
 ```bash
