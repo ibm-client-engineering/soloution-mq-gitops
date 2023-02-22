@@ -105,8 +105,14 @@ sudo mv argocd-linux-amd64  /usr/bin/argocd
 
 ## Create a hosted Zone in Route 53
 We are using the domain gitops-mq.demotime.cloud for this demo. You can use any domain you like.
+<cetails>
+<summary>
 ```
 aws route53 create-hosted-zone --name gitops-mq.demotime.cloud --caller-reference "Route 53 Addition"
+```
+</summary>
+
+```
 {
     "Location": "https://route53.amazonaws.com/2013-04-01/hostedzone/Z05962992YBU6O501Z5JI",
     "HostedZone": {
@@ -134,6 +140,8 @@ aws route53 create-hosted-zone --name gitops-mq.demotime.cloud --caller-referenc
 }
 
 ```
+</details>
+
 
 ## Request a Certificate for the hosted zone
 ```
@@ -148,16 +156,16 @@ aws acm request-certificate \
 }
 ```
 
-## Install ArgoCd into your cluster
+## Install ArgoCD into your cluster
 ```
 kubectl create namespace argocd
 kubectl config set-context --current --namespace=argocd 
 kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-## Create the argocy service patch template
+## Create the ArgoCD service patch template
+- Create this file `argocd/argocd-server-patch.yaml`, there is a template in the argocd/templates directory
 ```
-cat > argocd-server.patch.yaml << EOF
 apiVersion: v1
 kind: Service
 metadata:
@@ -167,20 +175,19 @@ spec:
   type: LoadBalancer
   loadBalancerSourceRanges:
   - "<LOCAL_IP_RANGES>"
-EOF
 
-# NOTE THE ARN IS COPIED FROM THE CREATE CERTIFICATE OUTPUT
 ```
 
 ## Update the template with the correct arn and IP
 ```
+# NOTE THE ARN IS COPIED FROM THE CREATE CERTIFICATE OUTPUT
 ACM_ARGOCD_ARN=" arn:aws:acm:us-east-1:748107796891:certificate/ccc1b02c-8bad-4559-ac61-5efd4087432b"
-sed -i "s,<ACM_ARGOCD_ARN>,${ACM_ARGOCD_ARN},g; s/<LOCAL_IP_RANGES>/$(curl -s http://checkip.amazonaws.com/)\/32/g; " argocd-server.patch.yaml
+sed -i "s,<ACM_ARGOCD_ARN>,${ACM_ARGOCD_ARN},g; s/<LOCAL_IP_RANGES>/$(curl -s http://checkip.amazonaws.com/)\/32/g; " argocd/argocd-server-patch.yaml
 ```
 
 ## Apply the patch to the argocd-server service
 ```
-kubectl patch svc argocd-server -p "$(cat argocd-server.patch.yaml)"
+kubectl patch svc argocd-server -p "$(cat argocd/argocd-server-patch.yaml)"
 service/argocd-server patched
 ```
 
@@ -308,6 +315,13 @@ kubectl create secret generic git-demo \
 --from-literal=username=<GIT_USERNAME> \
 --from-literal=password=<GIT_TOKEN>
 ```
+
+
+
+## This section will be for setting up the project pipeline for the CI/CD pipeline
+
+
+
 
 ## Update Strategy
 
