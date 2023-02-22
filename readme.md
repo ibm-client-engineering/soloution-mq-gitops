@@ -319,6 +319,10 @@ Because this is a HA deployment, we will need to update the statefulset, and the
 kubectl get statefulset gitops-mq-demo-ibm-mq -n gitops-mq --output yaml >mq/statefulset.yaml
 ```
 - edit the sateful set and apply
+```
+kubectl edit statefulset.apps/gitops-mq-demo-ibm-mq
+```
+
 ```bash
 kubectl apply -f mq/statefulset.yaml
 
