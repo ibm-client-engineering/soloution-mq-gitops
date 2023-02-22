@@ -106,10 +106,13 @@ sudo mv argocd-linux-amd64  /usr/bin/argocd
 ## Create a hosted Zone in Route 53
 We are using the domain gitops-mq.demotime.cloud for this demo. You can use any domain you like.
 <details>
-```
 <summary>
+```
 aws route53 create-hosted-zone --name gitops-mq.demotime.cloud --caller-reference "Route 53 Addition"
+```
 </summary>
+
+```
 {
     "Location": "https://route53.amazonaws.com/2013-04-01/hostedzone/Z05962992YBU6O501Z5JI",
     "HostedZone": {
