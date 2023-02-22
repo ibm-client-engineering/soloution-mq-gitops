@@ -1,0 +1,8 @@
+---
+spec:
+  serviceName: qm
+  template:
+    spec:
+      containers:
+        - name: qmgr
+          image: "icr.io/ibm-messaging/mq:9.3.2.0-r1"

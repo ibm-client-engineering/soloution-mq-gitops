@@ -1,25 +1,27 @@
 ---
+templates:
+  - name: mq
+    version:
 license: accept
 log:
   debug: true
 ​image:
   repository: icr.io/ibm-messaging/mq
   tag: 9.3.2.0-r1
-  pullSecret: null
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 queueManager:
   nativeha:
     enable: false
     tls:
-      secretName: mq-gitops-tls
+      secretName: gitops-mq-tls
   multiinstance:
     enable: true
   mqscConfigMaps:
-    - name: mq-gitops
+    - name: gitops-mq
       items:
         - mq.mqsc
   qminiConfigMaps:
-    - name: mq-gitops
+    - name: gitops-mq
       items:
         - mq.ini
 persistence:
@@ -51,14 +53,14 @@ pki:
   keys:
     - name: default
       secret:
-        secretName: mq-gitops-tls
+        secretName: gitops-mq-tls
         items:
           - tls.key
           - tls.crt
   trust:
     - name: default
       secret:
-        secretName: mq-gitops-tls
+        secretName: gitops-mq-tls
         items:
           - app.crt
 metadata:
@@ -79,14 +81,14 @@ route:
     webconsole:
       enable: true
       hostname: null
-      path: /gitops-ibm-mq
+      path: /gitopsmq
       tls:
         enable: true
-        secret: mq-gitops-tls
+        secret: gitops-mq-tls
     mqtraffic:
       enable: true
       hostname: null
       path: null
       tls:
         enable: true
-        secret: mq-gitops-tls
+        secret: gitops-mq-tls

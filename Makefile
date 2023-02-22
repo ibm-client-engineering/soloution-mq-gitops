@@ -1,25 +1,52 @@
+NAMESPACE=gitops-mq
 
-describe-pod:
-	@kubectl describe pod/mq-gitops-demo-ibm-mq-0 -n gitops-mq
+describe-pod-0:
+	@kubectl describe pod/gitops-mq-demo-ibm-mq-0 -n $(NAMESPACE)
+
+describe-pod-1:
+	@kubectl describe pod/gitops-mq-demo-ibm-mq-1 -n $(NAMESPACE)
+
+
+dry:
+	@helm install --dry-run   \
+	  -f mq/values.yaml \
+	  $(NAMESPACE)-demo \
+	  mq-helm-eks/ibm-mq \
+	  --set "queueManager.envVariables[0].name=MQ_ADMIN_PASSWORD" \
+	  --set "queueManager.envVariables[0].value=mqpasswd" \
+	  --set "queueManager.envVariables[1].name=MQ_APP_PASSWORD" \
+	  --set "queueManager.envVariables[1].value=mqpasswd"  \
+	  -n $(NAMESPACE)
 
 install:
-	@helm install  mq-gitops-demo mq-helm-eks/ibm-mq \
+	@helm install \
+	  $(NAMESPACE)-demo \
+	  mq-helm-eks/ibm-mq \
 	  -f mq/values.yaml \
 	  --set "queueManager.envVariables[0].name=MQ_ADMIN_PASSWORD" \
 	  --set "queueManager.envVariables[0].value=mqpasswd" \
 	  --set "queueManager.envVariables[1].name=MQ_APP_PASSWORD" \
-	  --set "queueManager.envVariables[1].value=mqpasswd" 
+	  --set "queueManager.envVariables[1].value=mqpasswd"  \
+	  -n $(NAMESPACE)
 
 upgrade:
-	@helm upgrade  mq-gitops-demo mq-helm-eks/ibm-mq \
-	  -f mq/values.yaml \
-	  --set "queueManager.envVariables[0].name=MQ_ADMIN_PASSWORD" \
-	  --set "queueManager.envVariables[0].value=mqpasswd" \
-	  --set "queueManager.envVariables[1].name=MQ_APP_PASSWORD" \
-	  --set "queueManager.envVariables[1].value=mqpasswd" 
+	@helm upgrade --dry-run \
+	  $(NAMESPACE)-demo \
+	  -f mq/values-9.3.2.yaml \
+	  mq-helm-eks/ibm-mq \
+	  -n $(NAMESPACE)
+#--set image.tag="9.3.2.0-r1" \
+
+downgrade:
+	@helm upgrade  \
+	  $(NAMESPACE)-demo \
+	  mq-helm-eks/ibm-mq \
+	  --set image.tag="9.3.1.0-r1" \
+	  -n $(NAMESPACE)
 
 uninstall:
-	@helm uninstall  mq-gitops-demo 
+	@-helm uninstall $(NAMESPACE)-demo 	  -n $(NAMESPACE)
+	@-kubectl delete namespace $(NAMESPACE)
 
 get-console:
 	CONSOLE_PORT=$(shell kubectl get services mq-gitops-demo-ibm-mq-web -n mq-gitops -o jsonpath="{.spec.ports[?(@.port==9443)].nodePort}")
@@ -29,14 +56,14 @@ get-console:
 
 
 namespace:
-	@-kubectl create namespace mq-gitops
+	@-kubectl create namespace $(NAMESPACE)
 
 set-context:
-	@kubectl config set-context --current --namespace=mq-gitops
+	@kubectl config set-context --current --namespace=$(NAMESPACE)
 
 config-map:
-	@kubectl apply -f mq/config-map.yaml -n mq-gitops
+	@kubectl apply -f mq/config-map.yaml -n $(NAMESPACE)
 
 
 
-build: namespace config-map install
+build: namespace set-context config-map install

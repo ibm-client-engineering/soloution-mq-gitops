@@ -3,3 +3,5 @@ todo
 *.tar
 .vscode-upload.json
 .chris.git.secret
+ibm-mq-*
+l

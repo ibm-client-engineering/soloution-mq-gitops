@@ -230,7 +230,7 @@ spec:
 kubectl patch deployment argocd-server -p "$(cat argocd-deployment-server.patch.yaml)" 
 ```
 
-## Update the ArgoCD web UI Password
+## Update the ArgoCD Web UI Password
 ```
 PUBLIC_DNS_NAME="gitops-mq.demotime.cloud"
 ARGOCD_ADDR="argocd.${PUBLIC_DNS_NAME}"
@@ -252,7 +252,7 @@ Password:
 'admin:login' logged in successfully
 ```
 
-## Login to Argo CD from the web UI
+## Login to Argo CD from the Web UI
 - https://argocd.gitops-mq.demotime.cloud   (use the password you set above)
 
 
@@ -304,6 +304,29 @@ kubectl apply -f argocd/argocd-rbac-configmap.yaml
 kubectl create secret generic git-demo \
 --from-literal=username=<GIT_USERNAME> \
 --from-literal=password=<GIT_TOKEN>
+```
+
+## Rolling updates
+Rolling upodates take a few forms
+- rolling updates via AB with a pipeline
+  - updates with helm charts
+  - rolling updates via AB with a script
+    
+## Rolling update via script
+Because this is a HA deployment, we will need to update the statefulset, and then the pods one at a time
+- get the sateful set
+```
+kubectl get statefulset gitops-mq-demo-ibm-mq -n gitops-mq --output yaml >mq/statefulset.yaml
+```
+- edit the sateful set and apply
+```bash
+kubectl apply -f mq/statefulset.yaml
+
+```
+- because this statefulset is build aroung an ondelete update strategy, we will need to manually update the pods
+```
+```bash
+./rolling-upgrade.sh  gitops-mq-demo-ibm-mq  gitops-mq
 ```
 
 
