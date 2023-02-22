@@ -50,6 +50,9 @@ Automating IBM MQ through GitOps offers a powerful solution for managing your me
     - [GENERATE A NEW PERSONAL ACCESS TOKEN FOR THE USER](#generate-a-new-personal-access-token-for-the-user)
     - [ADD YOUR GIT ACCESS TOKEN TO ARGO CD](#add-your-git-access-token-to-argo-cd)
     - [BUILDING BLOCK VIEW](#building-block-view)
+  - [UPDATE STRATEGY](##-Update-Strategy)
+    - [ROLLING UPDATE VIA SCRIPT](readme.md#rolling-update-via-script)
+
 - [DEPLOYMENT](#deployment)
 - [SECURITY](#security)
 - [COST](#cost)
@@ -305,6 +308,9 @@ kubectl create secret generic git-demo \
 --from-literal=username=<GIT_USERNAME> \
 --from-literal=password=<GIT_TOKEN>
 ```
+
+## Update Strategy
+
 
 ## Rolling update via script
 Because this is a HA deployment, we will need to update the statefulset, and then the pods one at a time
