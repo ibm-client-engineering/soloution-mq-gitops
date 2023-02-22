@@ -299,19 +299,13 @@ kubectl apply -f argocd/argocd-rbac-configmap.yaml
 - https://github.com/settings/personal-access-tokens/new
 
 
-## add your GIT access token to Argo CD
+## Add your GIT access token to Argo CD
 ```
 kubectl create secret generic git-demo \
 --from-literal=username=<GIT_USERNAME> \
 --from-literal=password=<GIT_TOKEN>
 ```
 
-## Rolling updates
-Rolling upodates take a few forms
-- rolling updates via AB with a pipeline
-  - updates with helm charts
-  - rolling updates via AB with a script
-    
 ## Rolling update via script
 Because this is a HA deployment, we will need to update the statefulset, and then the pods one at a time
 - get the sateful set
@@ -323,10 +317,39 @@ kubectl get statefulset gitops-mq-demo-ibm-mq -n gitops-mq --output yaml >mq/sta
 kubectl apply -f mq/statefulset.yaml
 
 ```
-- because this statefulset is build aroung an ondelete update strategy, we will need to manually update the pods
-```
+- because this statefulset is build around an ondelete update strategy, we will need to manually update the pods
+- This script will delete and rebuild the non active instance 
+- then it will switch active instances and revuild the other instance
+
 ```bash
 ./rolling-upgrade.sh  gitops-mq-demo-ibm-mq  gitops-mq
+Found the following pods to recycle: gitops-mq-demo-ibm-mq-0,gitops-mq-demo-ibm-mq-1,
+Determined gitops-mq-demo-ibm-mq-1 is the active instance and will leave until the end
+To continue type 'accept' below:
+accept
+Recycling gitops-mq-demo-ibm-mq-0
+pod "gitops-mq-demo-ibm-mq-0" deleted
+gitops-mq-demo-ibm-mq-0 deleted, waiting for it to become ready...
+Sleeping for 5 seconds to allow pod to resync with native ha pairs
+gitops-mq-demo-ibm-mq-0 ready
+Leaving gitops-mq-demo-ibm-mq-1 pod until the end
+Now recycling gitops-mq-demo-ibm-mq-1
+pod "gitops-mq-demo-ibm-mq-1" deleted
+gitops-mq-demo-ibm-mq-1 deleted, waiting for it to become ready...
+Error from server (NotFound): pods "gitops-mq-demo-ibm-mq-1" not found
+Error from server (NotFound): pods "gitops-mq-demo-ibm-mq-1" not found
+Error from server (NotFound): pods "gitops-mq-demo-ibm-mq-1" not found
+Error from server (NotFound): pods "gitops-mq-demo-ibm-mq-1" not found
+Sleeping for 5 seconds to allow pod to resync with native ha pairs
+gitops-mq-demo-ibm-mq-1 ready
+Recycle complete, the active in
+```
+- you can check the pods status by running
+```bash
+# POD 0
+	@kubectl describe pod/gitops-mq-demo-ibm-mq-0 -n  gitops-mq
+# POD 1
+	@kubectl describe pod/gitops-mq-demo-ibm-mq-1 -n  gitops-mq
 ```
 
 
