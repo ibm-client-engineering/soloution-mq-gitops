@@ -363,9 +363,9 @@ Recycle complete, the active in
 - you can check the pods status by running
 ```bash
 # POD 0
-	@kubectl describe pod/gitops-mq-demo-ibm-mq-0 -n  gitops-mq
+kubectl describe pod/gitops-mq-demo-ibm-mq-0 -n  gitops-mq 
 # POD 1
-	@kubectl describe pod/gitops-mq-demo-ibm-mq-1 -n  gitops-mq
+kubectl describe pod/gitops-mq-demo-ibm-mq-1 -n  gitops-mq
 ```
 
 
