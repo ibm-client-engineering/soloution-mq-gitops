@@ -1,0 +1,94 @@
+---
+templates:
+  - name: mq
+    version:
+license: accept
+log:
+  debug: true
+​image:
+  repository: icr.io/ibm-messaging/mq
+  tag: 9.3.2.0-r1
+  pullPolicy: Always
+queueManager:
+  nativeha:
+    enable: false
+    tls:
+      secretName: gitops-mq-tls
+  multiinstance:
+    enable: true
+  mqscConfigMaps:
+    - name: gitops-mq
+      items:
+        - mq.mqsc
+  qminiConfigMaps:
+    - name: gitops-mq
+      items:
+        - mq.ini
+persistence:
+  dataPVC:
+    enable: true
+    name: data
+    size: 2Gi
+    storageClassName: efs-sc
+  logPVC:
+    enable: true
+    name: log
+    size: 2Gi
+    storageClassName: efs-sc
+  qmPVC:
+    enable: true
+    name: qm
+    size: 2Gi
+    storageClassName: efs-sc
+security:
+  context:
+    fsGroup: 65534
+    supplementalGroups:
+      - 65534
+      - 2001
+  initVolumeAsRoot: false
+  runAsUser: 2001
+  runAsGroup: 2001
+pki:
+  keys:
+    - name: default
+      secret:
+        secretName: gitops-mq-tls
+        items:
+          - tls.key
+          - tls.crt
+  trust:
+    - name: default
+      secret:
+        secretName: gitops-mq-tls
+        items:
+          - app.crt
+metadata:
+  annotations:
+    productName: IBM MQ Advanced for Developers
+    productID: 2f886a3eefbe4ccb89b2adb97c78b9cb
+    productChargedContainers: ""
+    productMetric: FREE
+route:
+  nodePort:
+    webconsole: true
+    mqtraffic: true
+  loadBalancer:
+    webconsole: true
+    mqtraffic: true
+    awslbscheme: null
+  ingress:
+    webconsole:
+      enable: true
+      hostname: null
+      path: /gitopsmq
+      tls:
+        enable: true
+        secret: gitops-mq-tls
+    mqtraffic:
+      enable: true
+      hostname: null
+      path: null
+      tls:
+        enable: true
+        secret: gitops-mq-tls
