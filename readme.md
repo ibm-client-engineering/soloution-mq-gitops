@@ -3,6 +3,9 @@
 <h2>Solution Name</h2>
 <img align="right" src="https://user-images.githubusercontent.com/95059/166857681-99c92cdc-fa62-4141-b903-969bd6ec1a41.png" width="491" >
 
+# Block Overview
+![Alt text](assets/MQ-Argo.png)
+
 
 # Introduction and Goals
 In today's fast-paced world, automation has become the key to efficiency and agility. IBM MQ is a powerful messaging middleware that enables reliable communication between applications, and GitOps is a methodology that provides a streamlined approach to software delivery. Together, they offer an automated solution that can help you achieve faster and more efficient deployment of IBM MQ environments.
@@ -380,16 +383,3 @@ kubectl describe pod/gitops-mq-demo-ibm-mq-1 -n  gitops-mq
 ```
 
 
-
-## Building Block View
-
-## Deployment
-## Security
-
-## Cost
-
-## Risks and Technical Debts
-
-## Testing
-
-# Architecture Decisions
