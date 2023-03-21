@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   repositories: |
-    - url: <GIT_REPOSITORY_URL>
+    - url: https://github.com/ibm-client-engineering/solution-mq-gitops
       passwordSecret:
         name: demo
         key: password
@@ -20,7 +20,3 @@ data:
   accounts.demo: login
   accounts.ci.enabled: "true"
   accounts.ci: apiKey
-EOF
-
-GIT_USERNAME=<GIT_USERNAME>
-GIT_TOKEN=<GIT_TOKEN>
