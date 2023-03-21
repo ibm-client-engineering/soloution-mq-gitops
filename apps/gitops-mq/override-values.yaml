@@ -70,7 +70,7 @@ metadata:
     productChargedContainers: ""
     productMetric: FREE
     productMetric: FREE
-    appID: mq314159X
+    appID: mq000001X
     
 route:
   nodePort:

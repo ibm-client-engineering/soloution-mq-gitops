@@ -29,11 +29,11 @@ spec:
   {{- if .Values.queueManager.nativeha.enable }}
   podManagementPolicy: Parallel
   updateStrategy:
-    type: OnDelete
+    type: RollingUpdate
   replicas: 3
   {{- else if .Values.queueManager.multiinstance.enable }}
   updateStrategy:
-    type: OnDelete
+    type: RollingUpdate
   replicas: 2
   {{- else }}
   replicas: 1
