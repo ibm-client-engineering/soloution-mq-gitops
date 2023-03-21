@@ -7,8 +7,6 @@
 
 
 
-# Block Overview
-![Alt text](assets/MQ-Argo.png)
 
 
 # Introduction and Goals
@@ -67,6 +65,9 @@ Automating IBM MQ through GitOps offers a powerful solution for managing your me
 - [TESTING](#testing)
 - [ARCHITECTURE DECISIONS](#architecture-decisions)
 
+
+# Block Overview
+![Alt text](assets/MQ-Argo.png)
 
 
 # Environment
