@@ -1,16 +1,16 @@
 NAMESPACE=gitops-mq
 
 describe-pod-0:
-	@kubectl describe pod/gitops-mq-demo-ibm-mq-0 -n $(NAMESPACE)
+	@kubectl describe pod/gitops-mq-ibm-mq-0 -n $(NAMESPACE)
 
 describe-pod-1:
-	@kubectl describe pod/gitops-mq-demo-ibm-mq-1 -n $(NAMESPACE)
+	@kubectl describe pod/gitops-mq-ibm-mq-1 -n $(NAMESPACE)
 
 
 dry:
 	@helm install --dry-run   \
 	  -f mq/values.yaml \
-	  $(NAMESPACE)-demo \
+	  $(NAMESPACE) \
 	  mq-helm-eks/ibm-mq \
 	  --set "queueManager.envVariables[0].name=MQ_ADMIN_PASSWORD" \
 	  --set "queueManager.envVariables[0].value=mqpasswd" \
@@ -20,7 +20,7 @@ dry:
 
 install:
 	@helm install \
-	  $(NAMESPACE)-demo \
+	  $(NAMESPACE) \
 	  mq-helm-eks/ibm-mq \
 	  -f mq/values.yaml \
 	  --set "queueManager.envVariables[0].name=MQ_ADMIN_PASSWORD" \
@@ -31,7 +31,7 @@ install:
 
 upgrade:
 	@helm upgrade --dry-run \
-	  $(NAMESPACE)-demo \
+	  $(NAMESPACE) \
 	  -f mq/values-9.3.2.yaml \
 	  mq-helm-eks/ibm-mq \
 	  -n $(NAMESPACE)
@@ -39,7 +39,7 @@ upgrade:
 
 downgrade:
 	@helm upgrade  \
-	  $(NAMESPACE)-demo \
+	  $(NAMESPACE) \
 	  mq-helm-eks/ibm-mq \
 	  --set image.tag="9.3.1.0-r1" \
 	  -n $(NAMESPACE)
