@@ -1,5 +1,5 @@
 NAMESPACE=gitops-mq
-
+# test
 describe-pod-0:
 	@kubectl describe pod/gitops-mq-ibm-mq-0 -n $(NAMESPACE)
 
