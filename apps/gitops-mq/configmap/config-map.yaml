@@ -14,7 +14,7 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: gitops-mq
+  name: ibm-mq-configmap
   namespace: gitops-mq
 data:
   mq.mqsc: |-
