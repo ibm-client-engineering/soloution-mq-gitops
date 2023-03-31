@@ -17,11 +17,11 @@ queueManager:
   multiinstance:
     enable: true
   mqscConfigMaps:
-    - name: gitops-mq
+    - name: ibm-mq-configmap
       items:
         - mq.mqsc
   qminiConfigMaps:
-    - name: gitops-mq
+    - name: ibm-mq-configmap
       items:
         - mq.ini
 persistence:
