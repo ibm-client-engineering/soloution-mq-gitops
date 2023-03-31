@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-2-configmap
+  name: {{ .Release.Name }}-configmap
 data:
   myconfig.properties: |
         {{- toYaml $mergedConfig | nindent 4 }}
