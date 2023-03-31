@@ -62,7 +62,7 @@ set-context:
 	@kubectl config set-context --current --namespace=$(NAMESPACE)
 
 config-map:
-	@kubectl apply -f mq/config-map.yaml -n $(NAMESPACE)
+	@kubectl apply -f apps/gitops-mq/config-map.yaml -n $(NAMESPACE)
 
 
 
