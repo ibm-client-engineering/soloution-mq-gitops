@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: ibm-mq-configmap
 data:
-  {{- (.Files.Glob "configmap/*").AsConfig | nindent 2 }}
+  {{- (.Files.Glob "configmap/*") | nindent 4 }}
