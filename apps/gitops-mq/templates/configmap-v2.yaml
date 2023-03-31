@@ -1,5 +1,3 @@
-{{- $baseConfig := include "demo-merging-dynamic-configuration-in-helm.baseConfig" . | fromYaml -}}
-{{- $mergedConfig := mustMergeOverwrite (dict) .Values.config $baseConfig -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
