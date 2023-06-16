@@ -5,7 +5,7 @@ title: Architect
 ---
 
 # Block Overview
-![Alt text](assets/MQ-Argo.png)
+![Alt text](../../../assets/MQ-Argo.png)
 
 
 # Environment
