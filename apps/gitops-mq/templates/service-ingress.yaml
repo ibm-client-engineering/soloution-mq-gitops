@@ -11,8 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#    cert-manager.io/cluster-issuer: travelers-cluster-issuer
-#    cert-manager.io/common-name: travelors-mq-eks.ekslb.aws.travp.net
 {{- if (.Values.route.ingress.webconsole.enable) }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
